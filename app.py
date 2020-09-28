@@ -2,13 +2,21 @@ from backend import get_embedding
 from backend import verify_identity
 
 import os
+import logging
 
 import streamlit as st
-from logzero import logger
 
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 st.title("Speaker Verification")
 st.set_option("deprecation.showfileUploaderEncoding", False)
+
+logging.basicConfig(
+    filename="logs.log",
+    level=logging.DEBUG,
+    format="%(asctime)s - $(levelname)s - %(message)s",
+)
+
+logger = logging.getLogger(__name__)
 
 
 database = {}
@@ -17,6 +25,7 @@ THRESHOLD = 0.7
 menu_option = st.sidebar.radio("Menu", ["Enroll user", "Test user"])
 
 if menu_option == "Enroll user":
+    logger.debug("TEST")
     st.subheader(
         "Enroll a new user by entering their name and upload a short audio file of speech."
     )
