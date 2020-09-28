@@ -2,7 +2,6 @@
 __pycache__/
 *.py[cod]
 *$py.class
-*.h5
 
 nohup.out
 .DS_Store
@@ -107,3 +106,6 @@ ENV/
 
 # mypy
 .mypy_cache/
+
+*.h5
+samples/
