@@ -2,19 +2,17 @@ from backend import get_embedding
 from backend import verify_identity
 
 import os
-import random
 
 import streamlit as st
-import numpy as np
+from logzero import logger
 
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 st.title("Speaker Verification")
 st.set_option("deprecation.showfileUploaderEncoding", False)
 
-np.random.seed(123)
-random.seed(123)
 
 database = {}
+THRESHOLD = 0.7
 
 menu_option = st.sidebar.radio("Menu", ["Enroll user", "Test user"])
 
@@ -46,7 +44,7 @@ else:
     if username != "" and audio_file is not None:
         if st.button("Verify"):
             with st.spinner("Verifiying identity"):
-                result = verify_identity(database, audio_file, username)
+                result = verify_identity(database, audio_file, username, THRESHOLD)
             if result:
                 st.success("Identity verified successfully")
             else:

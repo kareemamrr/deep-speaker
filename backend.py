@@ -22,11 +22,11 @@ def get_embedding(audio_file):
     return embedding
 
 
-def verify_identity(database, audio_file, username):
+def verify_identity(database, audio_file, username, threshold):
     identity_embedding = database[username]
     test_embedding = get_embedding(audio_file)
     similarity = batch_cosine_similarity(identity_embedding, test_embedding)
-    if similarity > 0.7:
+    if similarity > threshold:
         return 1
     else:
         return 0
