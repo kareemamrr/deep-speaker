@@ -1,6 +1,5 @@
 import random
 import logging
-import os
 import glob
 from example import Model
 
@@ -35,5 +34,5 @@ if __name__ == "__main__":
             label = 1
         else:
             label = 0
-        preds = model.predict(audio_pair)
-        log_info(label, preds[1], preds[0], 0.7)
+        score, prediction = model.predict(audio_pair)
+        log_info(label, prediction, score, 0.7)

@@ -1,7 +1,6 @@
 import numpy as np
 import random
 
-from numpy.core.numeric import identity
 from audio import read_mfcc
 from batcher import sample_from_mfcc
 from constants import SAMPLE_RATE, NUM_FRAMES
@@ -15,7 +14,8 @@ random.seed(123)
 class Model:
     def __init__(self):
         self.threshold = 0.7
-        self.database = {}
+        self._database = {}
+        self.users = []
         self.model = DeepSpeakerModel()
         self.model.m.load_weights("ResCNN_checkpoint_850.h5", by_name=True)
 
@@ -31,11 +31,12 @@ class Model:
     def enroll(self, audio, name):
         mfcc = self.gen_mfcc(audio)
         embed = self.gen_embedding(mfcc)
-        self.database[name] = audio
+        self._database[name] = embed
+        if name not in self.users:
+            self.users.append(name)
 
     def verify(self, audio, name):
-        identity_embed = self.database[name]
-        audio1, audio2 = audio
+        identity_embed = self._database[name]
         mfcc = self.gen_mfcc(audio)
         test_embed = self.gen_embedding(mfcc)
         score = self.get_score([identity_embed, test_embed])
@@ -43,3 +44,7 @@ class Model:
             return 1
         else:
             return 0
+
+    def remove_embedding(self, name):
+        self._database.pop(name)
+        self.users.remove(name)
