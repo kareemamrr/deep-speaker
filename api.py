@@ -1,4 +1,3 @@
-#!/usr/bin python3
 from backend import Model
 from fastapi import FastAPI, File, Form, UploadFile
 
@@ -30,8 +29,12 @@ def update_user(uploadedfile: UploadFile = File(...), username: str = Form(...))
 
 
 @app.post("/verify")
-def verify_user(uploadedfile: UploadFile = File(...), username: str = Form(...)):
-    return model.verify(uploadedfile.file, username)
+def verify_user(
+    uploadedfile: UploadFile = File(...),
+    username: str = Form(...),
+    label: int = Form(...),
+):
+    return model.verify(uploadedfile.file, username, label)
 
 
 @app.get("/db")

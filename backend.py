@@ -6,9 +6,17 @@ from batcher import sample_from_mfcc
 from constants import SAMPLE_RATE, NUM_FRAMES
 from conv_models import DeepSpeakerModel
 from test import batch_cosine_similarity
+import logging
 
 np.random.seed(123)
 random.seed(123)
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+file_handler = logging.FileHandler("logs.log")
+formatter = logging.Formatter("%(asctime)s - %(message)s")
+file_handler.setFormatter(formatter)
+logger.addHandler(file_handler)
 
 
 class Model:
@@ -35,16 +43,26 @@ class Model:
         if name not in self.users:
             self.users.append(name)
 
-    def verify(self, audio, name):
+    def verify(self, audio, name, label):
         identity_embed = self._database[name]
         mfcc = self.gen_mfcc(audio)
         test_embed = self.gen_embedding(mfcc)
         score = self.get_score([identity_embed, test_embed])
         if score > self.threshold:
-            return 1
+            prediction = 1
         else:
-            return 0
+            prediction = 0
+        self.log_info(label, prediction, score)
+        return prediction
 
     def remove_embedding(self, name):
         self._database.pop(name)
         self.users.remove(name)
+
+    def log_info(self, label, prediction, score):
+        logger.info(f"Label -> {label}")
+        logger.info(f"Prediction -> {prediction}")
+        logger.info(f"Result -> {label == prediction}")
+        logger.info(f"Similarity score -> {score}")
+        logger.info(f"Threshold -> {self.threshold}")
+        logger.info("**************************************")
