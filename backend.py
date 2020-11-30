@@ -8,7 +8,6 @@ from conv_models import DeepSpeakerModel
 from test import batch_cosine_similarity
 import logging
 
-import numpy
 
 np.random.seed(123)
 random.seed(123)
@@ -68,4 +67,6 @@ class Model:
         logger.info(f"Similarity score -> {score}")
         logger.info(f"Threshold -> {self.threshold}")
         with open("logs.log", "a+") as logfile:
-            logfile.write("****************************************************************")
+            logfile.write(
+                "****************************************************************"
+            )

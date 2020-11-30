@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- <link href="style.css" rel="stylesheet"> -->
+    <link href="{{ url_for('static', path='/style.css') }}" rel="stylesheet">
+    <title>Document</title>
+</head>
+
+<body>
+    <header>
+        <div class="container">
+            <img src="{{ url_for('static', path='/orange_logo.svg') }}" alt="">
+        </div>
+    </header>
+    <section>
+        <div class="box">
+            <h2>
+                Record Audio
+            </h2>
+            <hr>
+
+            <div class="center">
+                <button id=record>
+                    <i class="icon-record"></i> Record
+                </button>
+                <button id=stopRecord>
+                    <i class="icon-stop"></i> stop
+                </button>
+            </div>
+            <div class="center">
+                <audio id=recordedAudio controls>
+                    <source src="" type="audio/ogg">
+                    <source src="" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+            </div>
+
+            <div>
+                <!-- <div class="circle">
+                    <div class="triangle"></div>
+                </div> -->
+
+                <!-- <div class="track-name">Audio track name</div> -->
+
+                <div class="delete">
+                    <a href="">
+                        <?xml version="1.0" ?>
+                        <svg height="30" viewBox="0 0 48 48" width="30" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M12 38c0 2.21 1.79 4 4 4h16c2.21 0 4-1.79 4-4v-24h-24v24zm26-30h-7l-2-2h-10l-2 2h-7v4h28v-4z" />
+                            <path d="M0 0h48v48h-48z" fill="none" />
+                        </svg>
+                    </a>
+
+                </div>
+            </div>
+            <div class="center">
+                <button class="send">
+                    Send
+                </button>
+            </div>
+
+        </div>
+    </section>
+</body>
+<script type="text/javascript" src="{{ url_for('static', path='/script.js') }}"></script>
+
+</html>
