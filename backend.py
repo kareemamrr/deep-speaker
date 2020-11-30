@@ -53,7 +53,7 @@ class Model:
             prediction = 1
         else:
             prediction = 0
-        self.log_info(label, prediction, score)
+        # self.log_info(label, prediction, score)
         return prediction
 
     def remove_embedding(self, name):

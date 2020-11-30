@@ -1,16 +1,12 @@
 from backend import Model
-import shutil
+import io
+import soundfile as sf
 from fastapi import FastAPI, File, Form, UploadFile, Request
-from fastapi.staticfiles import StaticFiles
-from fastapi.templating import Jinja2Templates
-from fastapi.responses import HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
 
 model = Model()
 
 app = FastAPI()
-app.mount("/static", StaticFiles(directory="static"), name="static")
-templates = Jinja2Templates(directory="templates")
 
 origins = ["http://127.0.0.1:5500", "http://127.0.0.1:8000"]
 app.add_middleware(
@@ -23,16 +19,17 @@ app.add_middleware(
 
 
 @app.post("/save")
-async def save(file: UploadFile = File(...)):
-    with open(file.filename, "wb") as buffer:
-        shutil.copyfileobj(file.file, buffer)
+def save(username: str = Form(...), file: UploadFile = File(...)):
+    audio_bytes = file.file.read()
+    signal, sr = sf.read(io.BytesIO(audio_bytes))
+    return f'{sr}'
+    # with open(f'uploads/{username}.wav', "bx") as buffer:
+    #     buffer.write(audio_bytes)
 
-    return {"filename": file.filename}
 
-
-@app.get("/", response_class=HTMLResponse)
+@app.get("/")
 def read_root(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
+    return 'Head to /docs endpoint'
 
 
 @app.post("/enroll")
