@@ -1,12 +1,17 @@
 from backend import Model
 from backend import Model
 import os
-from fastapi import FastAPI, File, Form, UploadFile
+from fastapi import FastAPI, File, Form, UploadFile, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 
 model = Model()
 
 app = FastAPI()
+
+app.mount("/static", StaticFiles(directory="static"), name="static")
+templates = Jinja2Templates(directory="templates")
 
 origins = ["http://127.0.0.1:5500", "http://127.0.0.1:8000"]
 app.add_middleware(
@@ -31,8 +36,8 @@ def clear_audio_embeddings():
 
 
 @app.get("/")
-def read_root():
-    return "Head to /docs endpoint"
+def read_root(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
 
 
 @app.get("/clear")
