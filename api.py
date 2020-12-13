@@ -1,7 +1,7 @@
 from backend import Model
-import io
-import soundfile as sf
-from fastapi import FastAPI, File, Form, UploadFile, Request
+from backend import Model
+import os
+from fastapi import FastAPI, File, Form, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 
 model = Model()
@@ -18,47 +18,43 @@ app.add_middleware(
 )
 
 
-@app.post("/save")
-def save(username: str = Form(...), file: UploadFile = File(...)):
-    audio_bytes = file.file.read()
-    signal, sr = sf.read(io.BytesIO(audio_bytes))
-    return f'{sr}'
-    # with open(f'uploads/{username}.wav', "bx") as buffer:
-    #     buffer.write(audio_bytes)
+def store_audio(audio, username):
+    audio_bytes = audio.file.read()
+    path = f"uploads/{username}.wav"
+    with open(path, mode="bx") as f:
+        f.write(audio_bytes)
+    return path
+
+
+def clear_audio_embeddings():
+    [os.remove(f"uploads/{file}") for file in os.listdir("uploads")]
 
 
 @app.get("/")
-def read_root(request: Request):
-    return 'Head to /docs endpoint'
+def read_root():
+    return "Head to /docs endpoint"
+
+
+@app.get("/clear")
+def clear_embeddings_cache():
+    [os.remove(f"embeddings/{file}") for file in os.listdir("embeddings")]
+    return "Cache cleared"
 
 
 @app.post("/enroll")
-def enroll_user(uploadedfile: UploadFile = File(...), username: str = Form(...)):
-    model.enroll(uploadedfile.file, username)
+def enroll_user(audio: UploadFile = File(...), username: str = Form(...)):
+    path = store_audio(audio, username)
+    Model.enroll(path, username)
+    clear_audio_embeddings()
     return "user profile added"
 
 
-@app.delete("/delete")
-def remove_user(username: str = Form(...)):
-    model.remove_embedding(username)
-    return "user profile removed"
-
-
-@app.put("/update")
-def update_user_voiceprint(
-    uploadedfile: UploadFile = File(...), username: str = Form(...)
-):
-    model.enroll(uploadedfile.file, username)
-    return "user profile updated"
-
-
 @app.post("/verify")
-def verify_user_identity(
-    uploadedfile: UploadFile = File(...),
-    username: str = Form(...),
-    label: int = Form(...),
-):
-    return model.verify(uploadedfile.file, username, label)
+def verify_user_identity(audio: UploadFile = File(...), username: str = Form(...)):
+    path = store_audio(audio, username)
+    pred = Model.verify(path, username)
+    clear_audio_embeddings()
+    return pred
 
 
 @app.get("/db")

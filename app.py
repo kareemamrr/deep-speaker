@@ -1,4 +1,4 @@
-from st_backend import Model
+from backend import Model
 import os
 import io
 import soundfile as sf
@@ -10,9 +10,9 @@ def decode_bytes(audio_bytes):
 
 
 def store_bytes_as_wav(audio_bytes, name):
-    with open(f'uploads/{name}.wav', mode='bx') as f:
+    with open(f"uploads/{name}.wav", mode="bx") as f:
         f.write(audio_bytes)
-    return f'uploads/{name}.wav'
+    return f"uploads/{name}.wav"
 
 
 def remove_file(path):
@@ -20,12 +20,12 @@ def remove_file(path):
 
 
 def audio_widget(key):
-    username = st.text_input('Username', value="", key=key)
+    username = st.text_input("Username", value="", key=key)
     uploaded_file = st.file_uploader("Choose an audio file", key=key)
 
     if uploaded_file is not None and len(username) > 0:
         audio_bytes = uploaded_file.read()
-        st.audio(audio_bytes, format='audio/wav')
+        st.audio(audio_bytes, format="audio/wav")
 
         if st.button(key):
             audio_path = store_bytes_as_wav(audio_bytes, username)
@@ -38,7 +38,7 @@ def audio_widget(key):
 
 
 def main():
-    st.title('Speaker Verification')
+    st.title("Speaker Verification")
     enroll_menu = st.beta_expander("Enroll user", expanded=True)
     verify_menu = st.beta_expander("Verify user", expanded=False)
 
@@ -48,6 +48,6 @@ def main():
         audio_widget("Verify")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     model = Model()
     main()
